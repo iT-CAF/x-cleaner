@@ -143,8 +143,9 @@ allow pasting
 | [`unretweet.js`](scripts/unretweet.js) | يلغي إعادات التغريد فقط | المنشورات |
 | [`unlike.js`](scripts/unlike.js) | يلغي الإعجابات | الإعجابات |
 
-<details>
-<summary><b>عرض كود <code>delete-tweets.js</code></b></summary>
+### حذف التغريدات وإلغاء الرتويت — `delete-tweets.js`
+
+افتح تبويب **المنشورات** (أو **الردود**) ثم الصق:
 
 ```javascript
 (async () => {
@@ -174,7 +175,48 @@ allow pasting
 })();
 ```
 
-</details>
+### إلغاء إعادات التغريد فقط — `unretweet.js`
+
+افتح تبويب **المنشورات** ثم الصق:
+
+```javascript
+(async () => {
+  const wait = ms => new Promise(r => setTimeout(r, ms));
+  let count = 0, empty = 0;
+  while (empty < 6) {
+    const rt = document.querySelector('[data-testid="unretweet"]');
+    if (!rt) { window.scrollBy(0, 2000); await wait(2500); empty++; continue; }
+    empty = 0;
+    rt.scrollIntoView({ block: 'center' });
+    rt.click(); await wait(600);
+    document.querySelector('[data-testid="unretweetConfirm"]')?.click();
+    count++; console.log('↺ رتويت ملغى', count);
+    await wait(1200);
+  }
+  console.log('✓ انتهى. المجموع:', count);
+})();
+```
+
+### إلغاء كل الإعجابات — `unlike.js`
+
+افتح تبويب **الإعجابات** `x.com/اسمك/likes` ثم الصق:
+
+```javascript
+(async () => {
+  const wait = ms => new Promise(r => setTimeout(r, ms));
+  let count = 0, empty = 0;
+  while (empty < 6) {
+    const b = document.querySelector('[data-testid="unlike"]');
+    if (!b) { window.scrollBy(0, 2000); await wait(2500); empty++; continue; }
+    empty = 0;
+    b.scrollIntoView({ block: 'center' });
+    b.click();
+    count++; console.log('♡ إعجاب ملغى', count);
+    await wait(1000);
+  }
+  console.log('✓ انتهى. المجموع:', count, '— حدّث الصفحة وأعد التشغيل إن بقي شيء');
+})();
+```
 
 ---
 
